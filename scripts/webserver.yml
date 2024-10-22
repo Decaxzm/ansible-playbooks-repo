@@ -1,54 +1,54 @@
 ---
-    - name: Configuración de un servidor web Nginx
-      hosts: all
-      become: yes
-      tasks:
-    
-        - name: Actualizar los paquetes de apt
-          apt:
-            update_cache: yes
-    
-        - name: Instalar Nginx
-          apt:
-            name: nginx
-            state: present
-    
-        - name: Iniciar y habilitar Nginx para que arranque al inicio
-          service:
-            name: nginx
-            state: started
-            enabled: yes
-    
-        - name: Crear un archivo de configuración de ejemplo para Nginx
-          copy:
-            dest: /etc/nginx/sites-available/default
-            content: |
-              server {
-                  listen 80 default_server;
-                  listen [::]:80 default_server;
-                  root /var/www/html;
-                  index index.html index.htm;
-                  server_name _;
-                  location / {
-                      try_files $uri $uri/ =404;
-                  }
+- name: Configuración de un servidor web Nginx
+  hosts: all
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.9  # Especifica el intérprete de Python aquí
+  tasks:
+    - name: Actualizar los paquetes de apt
+      apt:
+        update_cache: yes
+
+    - name: Instalar Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Iniciar y habilitar Nginx para que arranque al inicio
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Crear un archivo de configuración de ejemplo para Nginx
+      copy:
+        dest: /etc/nginx/sites-available/default
+        content: |
+          server {
+              listen 80 default_server;
+              listen [::]:80 default_server;
+              root /var/www/html;
+              index index.html index.htm;
+              server_name _;
+              location / {
+                  try_files $uri $uri/ =404;
               }
-    
-        - name: Reiniciar Nginx para aplicar cambios
-          service:
-            name: nginx
-            state: restarted
-    
-        - name: Crear página web de bienvenida
-          copy:
-            dest: /var/www/html/index.html
-            content: |
-              <html>
-              <head>
-                <title>Bienvenido a Nginx</title>
-              </head>
-              <body>
-                <h1>¡Nginx se ha configurado correctamente!</h1>
-              </body>
-              </html>
-    
+          }
+
+    - name: Reiniciar Nginx para aplicar cambios
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Crear página web de bienvenida
+      copy:
+        dest: /var/www/html/index.html
+        content: |
+          <html>
+          <head>
+            <title>Bienvenido a Nginx</title>
+          </head>
+          <body>
+            <h1>¡Nginx se ha configurado correctamente!</h1>
+          </body>
+          </html>
