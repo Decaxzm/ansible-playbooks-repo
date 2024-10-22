@@ -1,16 +1,16 @@
----
 - name: Configuración de un servidor web Nginx
-  hosts: all
+  hosts: localhost
   become: yes
   vars:
     ansible_python_interpreter: /usr/bin/python3.9  # Especifica el intérprete de Python aquí
-  tasks:
-    - name: Actualizar los paquetes de apt
-      apt:
-        update_cache: yes
+tasks: 
+    - name: Actualizar los paquetes de yum
+      yum:
+        name: '*'
+        state: latest
 
     - name: Instalar Nginx
-      apt:
+      yum:
         name: nginx
         state: present
 
@@ -20,20 +20,10 @@
         state: started
         enabled: yes
 
-    - name: Crear un archivo de configuración de ejemplo para Nginx
-      copy:
-        dest: /etc/nginx/sites-available/default
-        content: |
-          server {
-              listen 80 default_server;
-              listen [::]:80 default_server;
-              root /var/www/html;
-              index index.html index.htm;
-              server_name _;
-              location / {
-                  try_files $uri $uri/ =404;
-              }
-          }
+    - name: Crear un archivo de configuración de Nginx
+      template:
+        src: nginx.conf.j2  # Ruta a tu archivo de plantilla
+        dest: /etc/nginx/nginx.conf
 
     - name: Reiniciar Nginx para aplicar cambios
       service:
