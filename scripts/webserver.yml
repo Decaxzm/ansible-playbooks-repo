@@ -1,44 +1,9 @@
-- name: Configuración de un servidor web Nginx
-  hosts: localhost
-  become: yes
-  vars:
-    ansible_python_interpreter: /usr/bin/python3.9  # Especifica el intérprete de Python aquí
-tasks: 
-    - name: Actualizar los paquetes de yum
+- name: my_ec2
+  hosts: all
+  become: true  
+  tasks:
+    - name: Update package 
       yum:
         name: '*'
         state: latest
-
-    - name: Instalar Nginx
-      yum:
-        name: nginx
-        state: present
-
-    - name: Iniciar y habilitar Nginx para que arranque al inicio
-      service:
-        name: nginx
-        state: started
-        enabled: yes
-
-    - name: Crear un archivo de configuración de Nginx
-      template:
-        src: nginx.conf.j2  # Ruta a tu archivo de plantilla
-        dest: /etc/nginx/nginx.conf
-
-    - name: Reiniciar Nginx para aplicar cambios
-      service:
-        name: nginx
-        state: restarted
-
-    - name: Crear página web de bienvenida
-      copy:
-        dest: /var/www/html/index.html
-        content: |
-          <html>
-          <head>
-            <title>Bienvenido a Nginx</title>
-          </head>
-          <body>
-            <h1>¡Nginx se ha configurado correctamente!</h1>
-          </body>
-          </html>
+        
